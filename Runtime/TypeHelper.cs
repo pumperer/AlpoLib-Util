@@ -11,9 +11,11 @@ namespace alpoLib.Util
         private static Assembly _gameAssembly;
         private static Type[] _typesInGameAssembly;
         private static Dictionary<string, Dictionary<string, Type>> _typesInGameAssemblyWithNs;
-            
+
+        public static Assembly GameAssembly => _gameAssembly;
+        
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
-        public static void Init()
+        private static void Init()
         {
             var assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
             _gameAssembly = assemblies.FirstOrDefault(a => a.GetName().Name == "Assembly-CSharp");
