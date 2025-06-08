@@ -9,8 +9,7 @@ namespace alpoLib.Util
         public static event Action OnPauseEvent;
         public static event Action OnResumeEvent;
         public static event Action OnQuitEvent;
-
-        internal static event Action OnSaveEvent;
+        public static event Action OnSaveEvent;
 
         public void ResetAll()
         {
