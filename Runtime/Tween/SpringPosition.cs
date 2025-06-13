@@ -55,21 +55,16 @@ namespace alpoLib.Util
 
 		public void Finish()
 		{
-			if (enabled)
-			{
-				if (worldSpace) transform.position = target;
-				else transform.localPosition = target;
+			if (!enabled)
+				return;
+			
+			if (worldSpace) transform.position = target;
+			else transform.localPosition = target;
 
-				NotifyListeners();
-				enabled = false;
-			}
+			NotifyListeners();
+			enabled = false;
 		}
-
-		/// <summary>
-		/// Notify all finished event listeners.
-		/// </summary>
-
-		void NotifyListeners()
+		private void NotifyListeners()
 		{
 			Current = this;
 
@@ -78,11 +73,7 @@ namespace alpoLib.Util
 			Current = null;
 		}
 
-		/// <summary>
-		/// Start the tweening process.
-		/// </summary>
-
-		static public SpringPosition Begin(GameObject go, Vector3 pos, float strength)
+		public static SpringPosition Begin(GameObject go, Vector3 pos, float strength)
 		{
 			var sp = go.GetComponent<SpringPosition>();
 			if (sp == null) sp = go.AddComponent<SpringPosition>();
