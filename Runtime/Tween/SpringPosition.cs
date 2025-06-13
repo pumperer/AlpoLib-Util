@@ -15,10 +15,6 @@ namespace alpoLib.Util
 
 		public OnFinishedDelegate OnFinished;
 
-		// Deprecated functionality
-		// [SerializeField] [HideInInspector] GameObject eventReceiver = null;
-		// [SerializeField] [HideInInspector] public string callWhenFinished;
-
 		private Transform _trans;
 		private float _threshold = 0f;
 
@@ -29,12 +25,12 @@ namespace alpoLib.Util
 
 		private void Update()
 		{
-			float delta = ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
+			var delta = ignoreTimeScale ? Time.unscaledDeltaTime : Time.deltaTime;
 
 			if (worldSpace)
 			{
 				if (_threshold == 0f) _threshold = Mathf.Min((target - _trans.position).magnitude * 0.01f, 0.01f);
-				_trans.position = NGUIMath.SpringLerp(_trans.position, target, strength, delta);
+				_trans.position = ALMath.SpringLerp(_trans.position, target, strength, delta);
 
 				if (_threshold * _threshold >= (target - _trans.position).sqrMagnitude)
 				{
@@ -46,7 +42,7 @@ namespace alpoLib.Util
 			else
 			{
 				if (_threshold == 0f) _threshold = Mathf.Min((target - _trans.localPosition).magnitude * 0.01f, 0.01f);
-				_trans.localPosition = NGUIMath.SpringLerp(_trans.localPosition, target, strength, delta);
+				_trans.localPosition = ALMath.SpringLerp(_trans.localPosition, target, strength, delta);
 
 				if (_threshold * _threshold >= (target - _trans.localPosition).sqrMagnitude)
 				{
@@ -55,14 +51,7 @@ namespace alpoLib.Util
 					enabled = false;
 				}
 			}
-
-			// Ensure that the scroll bars remain in sync
-			if (mSv != null) mSv.QueueUpdateScrollbars();
 		}
-
-		/// <summary>
-		/// Immediately finish the animation.
-		/// </summary>
 
 		public void Finish()
 		{
@@ -73,9 +62,6 @@ namespace alpoLib.Util
 
 				NotifyListeners();
 				enabled = false;
-
-				// Ensure that the scroll bars remain in sync
-				if (mSv != null) mSv.QueueUpdateScrollbars();
 			}
 		}
 
@@ -87,10 +73,7 @@ namespace alpoLib.Util
 		{
 			Current = this;
 
-			if (onFinished != null) onFinished();
-
-			if (eventReceiver != null && !string.IsNullOrEmpty(callWhenFinished))
-				eventReceiver.SendMessage(callWhenFinished, this, SendMessageOptions.DontRequireReceiver);
+			OnFinished?.Invoke();
 
 			Current = null;
 		}
@@ -105,7 +88,7 @@ namespace alpoLib.Util
 			if (sp == null) sp = go.AddComponent<SpringPosition>();
 			sp.target = pos;
 			sp.strength = strength;
-			sp.onFinished = null;
+			sp.OnFinished = null;
 			if (!sp.enabled) sp.enabled = true;
 			return sp;
 		}
