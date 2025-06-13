@@ -220,7 +220,7 @@ namespace alpoLib.Util
 
 		private int pauseStack = 0;
 
-		private static ITimeGetter timeGetter;
+		private static ITimeGetter timeGetter = new DefaultTimeGetter();
 		
 		public static void SetTimeGetter(ITimeGetter timeGetter)
 		{
