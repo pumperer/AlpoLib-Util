@@ -88,7 +88,8 @@ namespace alpoLib.Util
         public void Dispose()
         {
             foreach (var obj in _usingList)
-                Release(obj);
+                _objectPool?.Release(obj);
+            _usingList.Clear();
             _objectPool?.Dispose();
         }
     }
