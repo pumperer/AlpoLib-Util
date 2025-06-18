@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -17,6 +18,8 @@ namespace alpoLib.Util
         private readonly ObjectPool<T> _objectPool;
         private readonly GameObject _prefab;
         private readonly Transform _parent;
+        
+        private readonly List<T> _usingList = new();
         
         public DefaultObjectPool(GameObject prefab, Transform parent = null)
         {
@@ -45,13 +48,18 @@ namespace alpoLib.Util
 
         public T Get()
         {
-            return _objectPool?.Get();
+            var obj = _objectPool?.Get();
+            _usingList.Add(obj);
+            return obj;
         }
         
         public void Release(T obj)
         {
-            if (obj)
-                _objectPool?.Release(obj);
+            if (!obj)
+                return;
+            
+            _objectPool?.Release(obj);
+            _usingList.Remove(obj);
         }
         
         private void ActionOnDestroy(T obj)
@@ -79,6 +87,8 @@ namespace alpoLib.Util
 
         public void Dispose()
         {
+            foreach (var obj in _usingList)
+                Release(obj);
             _objectPool?.Dispose();
         }
     }
