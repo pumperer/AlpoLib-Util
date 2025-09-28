@@ -102,14 +102,19 @@ namespace alpoLib.Util.WebApiClient
             DontDestroyOnLoad(go);
             
             var client = go.AddComponent<T>();
-            client._baseUrl = context.BaseUrl;
-            client._maxConcurrentRequests = context.MaxConcurrentRequests;
-            client._defaultMaxRetries = context.DefaultMaxRetries;
-            client._defaultRetryDelay = context.DefaultRetryDelay;
+            client.SetContext(context);
             client.StartCoroutine(client.Co_ProcessRequestQueue());
             go.name = client.name;
             
             return client;
+        }
+        
+        private void SetContext(WebApiClientInitializeContext context)
+        {
+            _baseUrl = context.BaseUrl;
+            _maxConcurrentRequests = context.MaxConcurrentRequests;
+            _defaultMaxRetries = context.DefaultMaxRetries;
+            _defaultRetryDelay = context.DefaultRetryDelay;
         }
 
         /// <summary>
@@ -299,7 +304,7 @@ namespace alpoLib.Util.WebApiClient
         /// - 큐 처리 중단
         /// - 진행 중인 모든 코루틴 정리
         /// </summary>
-        private void OnDestroy()
+        protected void OnDestroy()
         {
             _isProcessingQueue = false;
             StopAllCoroutines();
